@@ -112,7 +112,7 @@ def update_user_time(user_id):
     utc_minutes = (question_time_minutes + minutes_in_day - timezone * minutes_in_hour) % minutes_in_day
     collection.update_one({FIELDNAME_USER_ID: user_id}, {'$set': {FIELDNAME_UTC_QUESTION_TIME: utc_minutes}})
     utc_midnight = (minutes_in_day - timezone * minutes_in_hour) % minutes_in_day
-    collection.update_one({FIELDNAME_USER_ID: user_id}, {'$set': {FIELDNAME_UTC_QUESTION_TIME: utc_midnight}})
+    collection.update_one({FIELDNAME_USER_ID: user_id}, {'$set': {FIELDNAME_UTC_MIDNIGHT: utc_midnight}})
     log_str(f'user_id: {user_id}   updated user time: utc_question_time {utc_minutes}, midnight_time {utc_midnight}\n')
 
 
@@ -129,15 +129,15 @@ def get_ids_to_send():
     now = datetime.utcnow()
     minute = now.hour * minutes_in_hour + now.minute
     log_str(f'minute = {minute}\n')
-    for doc in collection.find({'utc_midnight_time_minutes': minute}):
-        update_person_status(doc['user_id'], False)
-    return [doc['user_id'] for doc in collection.find({'utc_question_time_minutes': minute})]
+    for doc in collection.find({FIELDNAME_UTC_MIDNIGHT: minute}):
+        update_person_status(doc[FIELDNAME_USER_ID], False)
+    return [doc[FIELDNAME_USER_ID] for doc in collection.find({FIELDNAME_UTC_QUESTION_TIME: minute})]
 
 
 def get_all_ids():
     client = MongoClient()
     collection = client[dbname][collection_name_persons]
-    return [doc['user_id'] for doc in collection.find()]
+    return [doc[FIELDNAME_USER_ID] for doc in collection.find()]
 
 
 
