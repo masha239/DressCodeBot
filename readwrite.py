@@ -131,7 +131,8 @@ def get_ids_to_send():
     log_str(f'minute = {minute}\n')
     for doc in collection.find({FIELDNAME_UTC_MIDNIGHT: minute}):
         update_person_status(doc[FIELDNAME_USER_ID], False)
-    return [doc[FIELDNAME_USER_ID] for doc in collection.find({FIELDNAME_UTC_QUESTION_TIME: minute})]
+    return [doc[FIELDNAME_USER_ID] for doc in collection.find({'$and': [{FIELDNAME_UTC_QUESTION_TIME: minute},
+                                                                        {FIELDNAME_ANSWER_STATUS: False}]})]
 
 
 def get_all_ids():
