@@ -7,20 +7,13 @@ from multiprocessing.context import Process
 from keyboards import *
 from infostrings import *
 from utils import check_info_string
+from fieldnames import *
 
 
 token, my_id = get_id_and_token()
 bot = telebot.TeleBot(token)
 colors_dict = defaultdict(list)
-
-INFO_PREFIX = 'info_'
-SEX_PREFIX  = 'sex_'
-OCCUPATION_PREFIX = 'occupation_'
-NEW_SEX_PREFIX = 'new_sex_'
-CHANGE_PREFIX = 'change_'
-COLOR_PREFIX = 'color_'
-INFO_PREFIX = 'info_'
-INFO_PREFIX = 'info_'
+MAX_COLORS_CNT = 4
 
 
 @bot.message_handler(commands=['help'])
@@ -65,7 +58,7 @@ def send_welcome(message):
 
 
 def get_timezone(message):
-    if check_info_string(message.from_user.id, 'timezone', message.text):
+    if check_info_string(message.from_user.id, FIELDNAME_TIMEZONE, message.text):
         bot.send_message(message.from_user.id, got_it_string)
         bot.send_message(message.from_user.id, give_me_time_string)
         bot.register_next_step_handler(message, get_time)
@@ -75,7 +68,7 @@ def get_timezone(message):
 
 
 def change_timezone(message):
-    if check_info_string(message.from_user.id, 'timezone', message.text):
+    if check_info_string(message.from_user.id, FIELDNAME_TIMEZONE, message.text):
         bot.send_message(message.from_user.id, got_it_string)
     else:
         bot.send_message(message.from_user.id, something_went_wrong_string)
@@ -83,7 +76,7 @@ def change_timezone(message):
 
 
 def get_time(message):
-    if check_info_string(message.from_user.id, 'question_time_minutes', message.text):
+    if check_info_string(message.from_user.id, FIELDNAME_QUESTION_TIME, message.text):
         bot.send_message(message.from_user.id, got_it_string)
         bot.send_message(message.from_user.id, give_me_info_string, reply_markup=keyboard_yesno)
     else:
@@ -92,7 +85,7 @@ def get_time(message):
 
 
 def change_time(message):
-    if check_info_string(message.from_user.id, 'question_time_minutes', message.text):
+    if check_info_string(message.from_user.id, FIELDNAME_QUESTION_TIME, message.text):
         bot.send_message(message.from_user.id, got_it_string)
     else:
         bot.send_message(message.from_user.id, something_went_wrong_string)
@@ -113,13 +106,13 @@ def callback_give_me_info(call):
 def callback_sex(call):
     prefix_len = len(SEX_PREFIX)
     sex = call.data[prefix_len:]
-    write_info(call.message.chat.id, 'sex', sex)
+    write_info(call.message.chat.id, FIELDNAME_SEX, sex)
     bot.send_message(call.message.chat.id, give_me_age_string)
     bot.register_next_step_handler(call.message, get_age)
 
 
 def get_age(message):
-    if check_info_string(message.from_user.id, 'age', message.text):
+    if check_info_string(message.from_user.id, FIELDNAME_AGE, message.text):
         bot.send_message(message.from_user.id, got_it_string)
         bot.send_message(message.from_user.id, give_me_city_string)
         bot.register_next_step_handler(message, get_city)
@@ -129,7 +122,7 @@ def get_age(message):
 
 
 def change_age(message):
-    if check_info_string(message.from_user.id, 'age', message.text):
+    if check_info_string(message.from_user.id, FIELDNAME_AGE, message.text):
         bot.send_message(message.from_user.id, got_it_string)
     else:
         bot.send_message(message.from_user.id, something_went_wrong_string)
@@ -137,20 +130,20 @@ def change_age(message):
 
 
 def get_city(message):
-    write_info(message.from_user.id, 'city', message.text)
+    write_info(message.from_user.id, FIELDNAME_CITY, message.text)
     bot.send_message(message.from_user.id, got_it_string)
     bot.send_message(message.from_user.id, give_me_occupation_string, reply_markup=keyboard_occupations)
 
 
 def change_city(message):
-    write_info(message.from_user.id, 'city', message.text)
+    write_info(message.from_user.id, FIELDNAME_CITY, message.text)
     bot.send_message(message.from_user.id, got_it_string)
 
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith(OCCUPATION_PREFIX))
 def callback_occupation(call):
     prefix_len = len(OCCUPATION_PREFIX)
-    write_info(call.message.chat.id, 'occupation', call.data[prefix_len:])
+    write_info(call.message.chat.id, FIELDNAME_OCCUPATION, call.data[prefix_len:])
     bot.send_message(call.message.chat.id, thank_for_info_string)
 
 
@@ -158,7 +151,7 @@ def callback_occupation(call):
 def callback_new_sex(call):
     prefix_len = len(NEW_SEX_PREFIX)
     sex = call.data[prefix_len:]
-    write_info(call.message.chat.id, 'sex', sex)
+    write_info(call.message.chat.id, FIELDNAME_SEX, sex)
     bot.send_message(call.message.chat.id, got_it_string)
 
 
@@ -166,21 +159,21 @@ def callback_new_sex(call):
 def callback_update_info(call):
     prefix_len = len(CHANGE_PREFIX)
     type_info = call.data[prefix_len:]
-    if type_info == 'sex':
+    if type_info == FIELDNAME_SEX:
         bot.send_message(call.message.chat.id, give_me_sex_string, reply_markup=keyboard_change_sex)
-    if type_info == 'age':
+    if type_info == FIELDNAME_AGE:
         bot.send_message(call.message.chat.id, give_me_age_string)
         bot.register_next_step_handler(call.message, change_age)
-    if type_info == 'city':
+    if type_info == FIELDNAME_CITY:
         bot.send_message(call.message.chat.id, give_me_city_string)
         bot.register_next_step_handler(call.message, change_city)
-    if type_info == 'utc_question_time_minutes':
+    if type_info == FIELDNAME_QUESTION_TIME:
         bot.send_message(call.message.chat.id, give_me_time_string)
         bot.register_next_step_handler(call.message, change_time)
-    if type_info == 'timezone':
+    if type_info == FIELDNAME_TIMEZONE:
         bot.send_message(call.message.chat.id, give_me_timezone_string)
         bot.register_next_step_handler(call.message, change_timezone)
-    if type_info == 'nothing':
+    if type_info == NOTHING:
         bot.send_message(call.message.chat.id, ok_string)
 
 
@@ -196,7 +189,7 @@ def callback_write_colors(call):
         colors_dict[call.message.chat.id] = []
     else:
         colors_dict[call.message.chat.id].append(answer)
-        if len(colors_dict[call.message.chat.id]) == 4:
+        if len(colors_dict[call.message.chat.id]) == MAX_COLORS_CNT:
             save_colors(call.message.chat.id, colors_dict[call.message.chat.id])
             update_person_status(call.message.chat.id, True)
             bot.send_message(call.message.chat.id, repeat_colors_string_from_list(colors_dict[call.message.chat.id]))
@@ -219,7 +212,7 @@ def send_messages():
         try:
             check_all_abonents()
         except Exception as e:
-            log_str(str(e)+'\n')
+            log_str(str(e) + '\n')
         now = time.time()
         seconds_in_minute = 60
         next = int(now) - int(now) % seconds_in_minute + seconds_in_minute

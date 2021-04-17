@@ -19,7 +19,7 @@ keyboard_occupations = keyboa_maker(items=occupations)
 personal_info = [{'Пол': 'change_sex'},
                  {'Возраст': 'change_age'},
                  {'Город': 'change_city'},
-                 {'Время вопроса': 'change_utc_question_time_minutes'},
+                 {'Время вопроса': 'change_question_time_minutes'},
                  {'Часовой пояс': 'change_timezone'},
                  {'Ничего менять не надо': 'change_nothing'}]
 keyboard_change_info = keyboa_maker(items=personal_info)
