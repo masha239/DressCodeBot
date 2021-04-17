@@ -6,7 +6,6 @@ from infostrings import colors_question_string
 token, my_id = get_id_and_token()
 bot = telebot.TeleBot(token)
 
-
 user_ids = get_ids_to_send()
 for user_id in user_ids:
     try:
