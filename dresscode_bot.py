@@ -205,8 +205,11 @@ def write_to_all(message):
 def send_message_to_all(message):
     user_ids = get_all_ids()
     for user_id in user_ids:
-        log_str(f'user_id: {user_id}   sent message from Maria\n')
-        bot.send_message(user_id, message.text)
+        try:
+            bot.send_message(user_id, message.text)
+            log_str(f'user_id: {user_id}   sent message from Maria\n')
+        except Exception as e:
+            log_str(str(e) + '\n')
     log_str(f'Maria wrote:  {message.text}\n')
 
 
@@ -214,8 +217,8 @@ if __name__ == '__main__':
     log_str('Bot started\n')
     try:
         bot.polling(none_stop=True)
-    except:
-        pass
+    except Exception as e:
+        log_str(str(e) + '\n')
 
 
 
