@@ -2,8 +2,6 @@ from collections import defaultdict
 
 import telebot
 from readwrite import *
-import time
-from multiprocessing.context import Process
 from keyboards import *
 from infostrings import *
 from utils import check_info_string
@@ -197,26 +195,11 @@ def callback_write_colors(call):
             colors_dict[call.message.chat.id] = []
 
 
-def check_all_abonents():
-    user_ids = get_ids_to_send()
-    for user_id in user_ids:
-        try:
-            bot.send_message(user_id, colors_question_string, reply_markup=keyboard_colors)
-            log_str(f'user_id: {user_id}   sent question about colors to user\n')
-        except Exception as e:
-            log_str(str(e) + '\n')
-
-
-def send_messages():
-    while True:
-        try:
-            check_all_abonents()
-        except Exception as e:
-            log_str(str(e) + '\n')
-        now = time.time()
-        seconds_in_minute = 60
-        next = int(now) - int(now) % seconds_in_minute + seconds_in_minute
-        time.sleep(next - now)
+@bot.message_handler(commands=['write_to_all'])
+def write_to_all(message):
+    if message.from_user.id == my_id:
+        bot.send_message(message.from_user.id, give_me_message_to_all_string)
+        bot.register_next_step_handler(message, send_message_to_all)
 
 
 def send_message_to_all(message):
@@ -227,21 +210,8 @@ def send_message_to_all(message):
     log_str(f'Maria wrote:  {message.text}\n')
 
 
-@bot.message_handler(commands=['write_to_all'])
-def write_to_all(message):
-    if message.from_user.id == my_id:
-        bot.send_message(message.from_user.id, give_me_message_to_all_string)
-        bot.register_next_step_handler(message, send_message_to_all)
-
-
-def start_process():
-    p1 = Process(target=send_messages, args=())
-    p1.start()
-
-
 if __name__ == '__main__':
     log_str('Bot started\n')
-    start_process()
     try:
         bot.polling(none_stop=True)
     except:
