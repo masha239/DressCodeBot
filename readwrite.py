@@ -141,5 +141,34 @@ def get_all_ids():
     return [doc[FIELDNAME_USER_ID] for doc in collection.find()]
 
 
+def get_day(date: datetime, timezone):
+    print(date)
+    corrected_date = date + timedelta(hours=timezone)
+    print(corrected_date)
+    return corrected_date.date()
 
+
+def get_all_color_records_user(user_id, time_start, time_finish):
+    client = MongoClient()
+    collection = client[dbname][collection_name_colors]
+    all_records_user = [doc for doc in collection.find({'$and': [
+        {FIELDNAME_USER_ID: user_id},
+        {FIELDNAME_DATE: {'$gte': time_start}},
+        {FIELDNAME_DATE: {'$lte': time_finish}}
+    ]}) if len(doc[FIELDNAME_COLORS]) > 0]
+
+    if len(all_records_user) == 0:
+        return []
+
+    all_records_user.sort(key=lambda x: x[FIELDNAME_DATE])
+    timezone_user = collection.find({FIELDNAME_USER_ID: user_id})[0][FIELDNAME_TIMEZONE]
+    filtered_records = []
+    for i in range(len(all_records_user) - 1):
+        curr_date = get_day(all_records_user[i][FIELDNAME_DATE], timezone_user)
+        next_date = get_day(all_records_user[i + 1][FIELDNAME_DATE], timezone_user)
+        if curr_date != next_date:
+            filtered_records.append(all_records_user[i])
+
+    filtered_records.append(all_records_user[-1])
+    return filtered_records
 
