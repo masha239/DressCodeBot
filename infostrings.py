@@ -65,3 +65,6 @@ piechart_string = 'Так выглядит круговая диаграмма �
 
 def repeat_colors_string_from_list(colors):
     return 'Записал! Твои цвета сегодня: ' + ', '.join(colors)
+
+def get_number_answers_string(number):
+    return f'Количество дней, когда были сохранены цвета: {number}'

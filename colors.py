@@ -36,7 +36,7 @@ def get_color_name(color):
         'розовый': 'pink',
         'голубой': 'lightskyblue',
         'бежевый': 'beige',
-        'коричневый': 'brown',
+        'коричневый': 'saddlebrown',
         'сиреневый': 'orchid',
         'бордовый': 'maroon',
         'бирюзовый': 'mediumturquoise',
