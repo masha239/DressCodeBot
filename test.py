@@ -12,8 +12,9 @@ colors = db['colors']
 
 for doc in persons.find():
     for field in doc.keys():
-        if field not in ['sex', 'age', '_id', 'occupation', 'city']:
-           print(field, doc[field])
+        print(field, doc[field])
+    #for doc1 in colors.find({'user_id': doc['user_id']}):
+    #    print(doc1['date'], doc1['colors'])
     print()
 
 for doc in messages.find({'time': {'$gte': datetime.now() - timedelta(hours=96)}}):
