@@ -5,7 +5,7 @@ color_names = ['белый', 'серый', 'черный',
               'зеленый', 'оранжевый', 'фиолетовый',
               'розовый', 'голубой', 'бежевый',
               'коричневый', 'сиреневый', 'бордовый',
-              'бирюзовый', 'коралловый', 'ВЫХОД']
+              'бирюзовый', 'коралловый', 'салатовый', 'ВЫХОД']
 colors = [{color: 'color_' + color} for color in color_names]
 keyboard_colors = keyboa_maker(items=colors, copy_text_to_callback=True, items_in_row=3)
 

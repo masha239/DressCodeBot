@@ -60,6 +60,8 @@ wanna_change_colors_string = 'Если хочешь изменить цвета,
 
 give_me_message_to_all_string = 'Что ты хочешь отправить всем?'
 
+piechart_string = 'Так выглядит круговая диаграмма твоих цветов за прошедшую неделю!'
+
 
 def repeat_colors_string_from_list(colors):
     return 'Записал! Твои цвета сегодня: ' + ', '.join(colors)

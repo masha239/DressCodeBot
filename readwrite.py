@@ -142,33 +142,34 @@ def get_all_ids():
 
 
 def get_day(date: datetime, timezone):
-    print(date)
     corrected_date = date + timedelta(hours=timezone)
-    print(corrected_date)
     return corrected_date.date()
 
 
 def get_all_color_records_user(user_id, time_start, time_finish):
     client = MongoClient()
     collection = client[dbname][collection_name_colors]
+    collection_persons = client[dbname][collection_name_persons]
     all_records_user = [doc for doc in collection.find({'$and': [
         {FIELDNAME_USER_ID: user_id},
         {FIELDNAME_DATE: {'$gte': time_start}},
         {FIELDNAME_DATE: {'$lte': time_finish}}
     ]}) if len(doc[FIELDNAME_COLORS]) > 0]
 
-    if len(all_records_user) == 0:
-        return []
+    timezone_user = collection_persons.find({FIELDNAME_USER_ID: user_id})[0][FIELDNAME_TIMEZONE]
+    return all_records_user, timezone_user
 
-    all_records_user.sort(key=lambda x: x[FIELDNAME_DATE])
-    timezone_user = collection.find({FIELDNAME_USER_ID: user_id})[0][FIELDNAME_TIMEZONE]
-    filtered_records = []
-    for i in range(len(all_records_user) - 1):
-        curr_date = get_day(all_records_user[i][FIELDNAME_DATE], timezone_user)
-        next_date = get_day(all_records_user[i + 1][FIELDNAME_DATE], timezone_user)
-        if curr_date != next_date:
-            filtered_records.append(all_records_user[i])
 
-    filtered_records.append(all_records_user[-1])
-    return filtered_records
+def get_last_week(user_id):
 
+    seconds_in_hour = 60 * 60
+    seconds_in_day = seconds_in_hour * 24
+    days_in_week = 7
+
+    now = datetime.now()
+    timezone = int(get_settings(user_id)[0]['Временная зона'])
+    stamp_finish = now.timestamp() - now.timestamp() % seconds_in_day - 2 * timezone * seconds_in_hour
+    time_finish = datetime.fromtimestamp(stamp_finish)
+    stamp_start = stamp_finish - days_in_week * seconds_in_day
+    time_start = datetime.fromtimestamp(stamp_start)
+    return time_start, time_finish
