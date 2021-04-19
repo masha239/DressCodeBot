@@ -4,8 +4,8 @@ from os import path
 from fieldnames import FIELDNAME_DATE
 
 
-def get_day(date: datetime, timezone):
-    corrected_date = date + timedelta(hours=timezone)
+def get_day_minus3(date: datetime, timezone):
+    corrected_date = date + timedelta(hours=timezone) - timedelta(minutes=180)
     return corrected_date.date()
 
 
@@ -13,8 +13,8 @@ def sort_colors(timezone, all_records_user):
     all_records_user.sort(key=lambda x: x[FIELDNAME_DATE])
     filtered_records = []
     for i in range(len(all_records_user) - 1):
-        curr_date = get_day(all_records_user[i][FIELDNAME_DATE], timezone)
-        next_date = get_day(all_records_user[i + 1][FIELDNAME_DATE], timezone)
+        curr_date = get_day_minus3(all_records_user[i][FIELDNAME_DATE], timezone)
+        next_date = get_day_minus3(all_records_user[i + 1][FIELDNAME_DATE], timezone)
         if curr_date != next_date:
             filtered_records.append(all_records_user[i])
 

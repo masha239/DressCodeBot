@@ -129,7 +129,8 @@ def get_ids_to_send():
     now = datetime.utcnow()
     minute = now.hour * minutes_in_hour + now.minute
     log_str(f'minute = {minute}\n')
-    for doc in collection.find({FIELDNAME_UTC_MIDNIGHT: minute}):
+    midnight_maybe = (minute - 3 * minutes_in_hour + minutes_in_day) % minutes_in_day
+    for doc in collection.find({FIELDNAME_UTC_MIDNIGHT: midnight_maybe}):
         update_person_status(doc[FIELDNAME_USER_ID], False)
     return [doc[FIELDNAME_USER_ID] for doc in collection.find({'$and': [{FIELDNAME_UTC_QUESTION_TIME: minute},
                                                                         {FIELDNAME_ANSWER_STATUS: False}]})]
@@ -160,7 +161,7 @@ def get_all_color_records_user(user_id, time_start, time_finish):
     return all_records_user, timezone_user
 
 
-def get_last_week(user_id):
+def get_last_week_plus3(user_id):
 
     seconds_in_hour = 60 * 60
     seconds_in_day = seconds_in_hour * 24
@@ -168,7 +169,7 @@ def get_last_week(user_id):
 
     now = datetime.now()
     timezone = int(get_settings(user_id)[0]['Временная зона'])
-    stamp_finish = now.timestamp() - now.timestamp() % seconds_in_day - 2 * timezone * seconds_in_hour
+    stamp_finish = now.timestamp() - now.timestamp() % seconds_in_day - 2 * timezone * seconds_in_hour + 3 * seconds_in_hour
     time_finish = datetime.fromtimestamp(stamp_finish)
     stamp_start = stamp_finish - days_in_week * seconds_in_day
     time_start = datetime.fromtimestamp(stamp_start)
