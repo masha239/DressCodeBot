@@ -35,8 +35,8 @@ if __name__ == '__main__':
     filename_hist = make_hist(all_colors)
     for user_id in user_ids:
         try:
-            bot.send_message(my_id, hist_string)
-            bot.send_photo(my_id, open(filename_hist, 'rb'))
+            bot.send_message(user_id, hist_string)
+            bot.send_photo(user_id, open(filename_hist, 'rb'))
             log_str(f'user_id: {user_id}   sent piechart\n')
             time.sleep(1)
         except Exception as e:
