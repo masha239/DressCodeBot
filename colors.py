@@ -60,3 +60,27 @@ def make_pie_chart(user_id, colors_list):
     plt.savefig(full_name)
     plt.close()
     return full_name
+
+
+def make_hist(colors_list):
+    all_colors = []
+    for record in colors_list:
+        all_colors += record['colors']
+    unique_colors = list(set(all_colors))
+    unique_colors.sort(key=lambda color: all_colors.count(color) * -1)
+    colors_cnt = [all_colors.count(color) for color in unique_colors]
+    python_colors = [get_color_name(color) for color in unique_colors]
+
+    fig, ax = plt.subplots()
+
+    ax.bar(unique_colors, colors_cnt, color=python_colors)
+
+    fig.set_figwidth(15)  # ширина и
+    fig.set_figheight(10)  # высота "Figure"
+    fig.set_facecolor('floralwhite')
+    ax.set_facecolor('seashell')
+    filename = f'{datetime.now().timestamp()}.png'
+    full_name = path.join('hists', filename)
+    plt.savefig(full_name)
+    plt.close()
+    return full_name
