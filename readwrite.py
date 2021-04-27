@@ -189,3 +189,9 @@ def change_message_status(message_id, status):
     with MongoClient() as client:
         collection = client[dbname][collection_name_messages]
         collection.update_one({'_id': message_id}, {'$set': {'answer_status': status}})
+
+
+def improve_answer_statuses():
+    with MongoClient() as client:
+        collection = client[dbname][collection_name_messages]
+        collection.update_many({'answer_status': 2}, {'$set': {'answer_status': 0}})

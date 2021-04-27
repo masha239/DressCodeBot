@@ -222,6 +222,7 @@ def answer_to_messages(message):
             records = get_one_message()
             if len(records) == 0:
                 bot.send_message(my_id, no_messages_string)
+                improve_answer_statuses()
             else:
                 for record in records:
                     current_record_to_process[0] = record[0]
@@ -230,7 +231,7 @@ def answer_to_messages(message):
                     bot.send_message(my_id, f'{record[2]}')
                     bot.send_message(my_id, f'{record[3]}')
                     keyboard = types.ReplyKeyboardMarkup(one_time_keyboard=True)
-                    keyboard.add('Ответить', 'Игнорировать', 'Стоп')
+                    keyboard.add('Ответить', 'Игнорировать', 'Позже', 'Стоп')
                     bot.send_message(my_id, 'Что будем делать?', reply_markup=keyboard)
                     bot.register_next_step_handler(message, process_answer)
         except Exception as e:
@@ -242,6 +243,10 @@ def process_answer(message):
         answer_to_message()
     elif message.text == 'Игнорировать':
         ignore_message(message)
+    elif message.text == 'Позже':
+        hold_message(message)
+    else:
+        improve_answer_statuses()
 
 
 def answer_to_message():
@@ -261,6 +266,11 @@ def send_answer(message):
 
 def ignore_message(message):
     change_message_status(current_record_to_process[0], 1)
+    answer_to_messages(message)
+
+
+def hold_message(message):
+    change_message_status(current_record_to_process[0], 2)
     answer_to_messages(message)
 
 
