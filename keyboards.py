@@ -16,6 +16,11 @@ occupations = [{'Школьник': 'occupation_kid'},
                {'Что-то еще': 'occupation_unknown'}]
 keyboard_occupations = keyboa_maker(items=occupations)
 
+answers = [{'Ответить сейчас': 'answer_now'},
+           {'Ответить позже': 'answer_later'},
+           {'Игнорировать': 'answer_never'}]
+keyboard_answers = keyboa_maker(items=answers)
+
 personal_info = [{'Пол': 'change_sex'},
                  {'Возраст': 'change_age'},
                  {'Город': 'change_city'},

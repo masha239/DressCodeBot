@@ -1,6 +1,7 @@
 from collections import defaultdict
 
 import telebot
+from telebot import types
 from readwrite import *
 from keyboards import *
 from infostrings import *
@@ -11,6 +12,7 @@ from fieldnames import *
 token, my_id = get_id_and_token()
 bot = telebot.TeleBot(token)
 colors_dict = defaultdict(list)
+current_record_to_process = [0, 0]
 MAX_COLORS_CNT = 4
 
 
@@ -211,6 +213,55 @@ def send_message_to_all(message):
         except Exception as e:
             log_str(str(e) + '\n')
     log_str(f'Maria wrote:  {message.text}\n')
+
+
+@bot.message_handler(commands=['answer_to_messages'])
+def answer_to_messages(message):
+    if message.from_user.id == my_id:
+        try:
+            records = get_one_message()
+            if len(records) == 0:
+                bot.send_message(my_id, no_messages_string)
+            else:
+                for record in records:
+                    current_record_to_process[0] = record[0]
+                    current_record_to_process[1] = record[1]
+                    bot.send_message(my_id, f'{record[1]}')
+                    bot.send_message(my_id, f'{record[2]}')
+                    bot.send_message(my_id, f'{record[3]}')
+                    keyboard = types.ReplyKeyboardMarkup(one_time_keyboard=True)
+                    keyboard.add('Ответить', 'Игнорировать', 'Стоп')
+                    bot.send_message(my_id, 'Что будем делать?', reply_markup=keyboard)
+                    bot.register_next_step_handler(message, process_answer)
+        except Exception as e:
+            log_str(str(e) + '\n')
+
+
+def process_answer(message):
+    if message.text == 'Ответить':
+        answer_to_message()
+    elif message.text == 'Игнорировать':
+        ignore_message(message)
+
+
+def answer_to_message():
+    msg = bot.send_message(my_id, 'Напиши свой ответ')
+    bot.register_next_step_handler(msg, send_answer)
+
+
+def send_answer(message):
+    try:
+        bot.send_message(current_record_to_process[1], message.text)
+        log_str(f'user_id: {current_record_to_process[1]}   received answer from Maria\n')
+        change_message_status(current_record_to_process[0], 1)
+    except Exception as e:
+        log_str(str(e) + '\n')
+    answer_to_messages(message)
+
+
+def ignore_message(message):
+    change_message_status(current_record_to_process[0], 1)
+    answer_to_messages(message)
 
 
 if __name__ == '__main__':

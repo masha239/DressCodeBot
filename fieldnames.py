@@ -5,7 +5,7 @@ NEW_SEX_PREFIX = 'new_sex_'
 CHANGE_PREFIX = 'change_'
 COLOR_PREFIX = 'color_'
 INFO_PREFIX = 'info_'
-INFO_PREFIX = 'info_'
+ANSWER_PREFIX = 'answer_'
 
 FIELDNAME_TIMEZONE = 'timezone'
 FIELDNAME_QUESTION_TIME = 'question_time_minutes'
