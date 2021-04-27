@@ -1,12 +1,7 @@
 from keyboa import keyboa_maker
+from fieldnames import color_names
 
-color_names = ['белый', 'серый', 'черный',
-              'красный', 'синий', 'желтый',
-              'зеленый', 'оранжевый', 'фиолетовый',
-              'розовый', 'голубой', 'бежевый',
-              'коричневый', 'сиреневый', 'бордовый',
-              'бирюзовый', 'коралловый', 'салатовый', 'ВЫХОД']
-colors = [{color: 'color_' + color} for color in color_names]
+colors = [{color: 'color_' + color} for color in color_names + ['ВЫХОД']]
 keyboard_colors = keyboa_maker(items=colors, copy_text_to_callback=True, items_in_row=3)
 
 occupations = [{'Школьник': 'occupation_kid'},

@@ -195,3 +195,15 @@ def improve_answer_statuses():
     with MongoClient() as client:
         collection = client[dbname][collection_name_messages]
         collection.update_many({'answer_status': 2}, {'$set': {'answer_status': 0}})
+
+
+def get_all_persons():
+    with MongoClient() as client:
+        collection = client[dbname][collection_name_persons]
+        return [doc for doc in collection.find()]
+
+
+def get_all_colors():
+    with MongoClient() as client:
+        collection = client[dbname][collection_name_colors]
+        return [doc for doc in collection.find()]
