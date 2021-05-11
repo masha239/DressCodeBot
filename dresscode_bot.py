@@ -275,7 +275,7 @@ def hold_message(message):
 
 
 if __name__ == '__main__':
-    log_str('Bot started!\n')
+    log_str('Bot started!!\n')
     try:
         bot.polling(none_stop=True)
     except Exception as e:
