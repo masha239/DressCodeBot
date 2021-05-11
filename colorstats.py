@@ -1,7 +1,8 @@
 import telebot
-from colors import make_pie_chart, sort_colors, make_hist
+from colors import make_pie_chart, make_hist
 from readwrite import get_id_and_token, log_str, get_all_color_records_user, get_all_ids, get_last_week_plus3
 from infostrings import piechart_string, get_number_answers_string, hist_string
+from utils import sort_colors
 import os
 import time
 

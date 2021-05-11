@@ -1,6 +1,5 @@
 from readwrite import write_info
 
-
 def check_info_string(user_id, info_type, info_string):
     if info_type == 'age':
         try:
