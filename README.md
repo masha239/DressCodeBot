@@ -2,4 +2,6 @@
 
 Сам бот в telegram: @dresscode_colors_bot
 
-Текущая аналитика данных: https://masha239.github.io/ 
+Текущая аналитика данных: https://masha239.github.io/
+
+Презентация: Презентация бота.pptx
